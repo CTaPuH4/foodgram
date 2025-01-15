@@ -8,7 +8,8 @@ from users.models import CustomUser
 class AbstractModel(models.Model):
     name = models.CharField(
         'Название',
-        max_length=TITLE_MAX_LENGTH
+        max_length=TITLE_MAX_LENGTH,
+        unique=True
     )
 
     def __str__(self):
