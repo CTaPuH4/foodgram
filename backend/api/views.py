@@ -40,7 +40,7 @@ class IngredientViewSet(mixins.ListModelMixin,
 
 
 class RecipeViewSet(viewsets.ModelViewSet, RecipeActionMixin):
-    queryset = Recipe.objects.all()
+    queryset = Recipe.objects.all().order_by('-id')
     serializer_class = RecipeSerializer
     filter_backends = [DjangoFilterBackend]
     filterset_class = RecipeFilterSet
