@@ -1,8 +1,9 @@
 import re
-from rest_framework import serializers
-from drf_extra_fields.fields import Base64ImageField
+
 from django.contrib.auth.password_validation import validate_password
 from django.core.validators import MaxLengthValidator
+from drf_extra_fields.fields import Base64ImageField
+from rest_framework import serializers
 from rest_framework.validators import UniqueValidator
 
 from api.constants import NAME_MAX_LENGTH

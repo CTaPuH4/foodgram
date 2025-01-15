@@ -1,14 +1,14 @@
-from rest_framework import mixins, permissions, views, viewsets, status
 from django.db.models import Count
+from rest_framework import mixins, permissions, status, views, viewsets
 from rest_framework.decorators import action
 from rest_framework.response import Response
 
 from api.paginators import CustomPagination
+from users.models import CustomUser
 from users.serializers import (AvatarUpdateSerializer,
                                ChangePasswordSerializer,
-                               CustomUserSerializer,
-                               CustomUserRecipesSerializer)
-from users.models import CustomUser
+                               CustomUserRecipesSerializer,
+                               CustomUserSerializer)
 
 
 class CustomUserViewSet(mixins.ListModelMixin,

@@ -1,5 +1,5 @@
-from django.db import models
 from django.core.validators import MinValueValidator
+from django.db import models
 
 from recipes.constants import TITLE_MAX_LENGTH
 from users.models import CustomUser
