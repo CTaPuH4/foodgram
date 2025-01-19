@@ -247,7 +247,6 @@ class RecipeSerializer(serializers.ModelSerializer):
             )
             for ingredient_obj in ingredients_data
         ]
-
         RecipeIngredients.objects.bulk_create(recipe_ingredients)
 
         return recipe
@@ -272,13 +271,13 @@ class RecipeSerializer(serializers.ModelSerializer):
         return super().update(instance, validated_data)
 
     def get_is_favorited(self, obj):
-        user = self.context('request').user
+        user = self.context['request'].user
         if user.is_authenticated:
             return user.fav.filter(id=obj.id).exists()
         return False
 
     def get_is_in_shopping_cart(self, obj):
-        user = self.context('request').user
+        user = self.context['request'].user
         if user.is_authenticated:
             return user.cart.filter(id=obj.id).exists()
         return False

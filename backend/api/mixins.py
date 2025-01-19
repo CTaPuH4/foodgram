@@ -5,7 +5,7 @@ from api.serializers import RelatedRecipeSerializer
 
 
 class RecipeActionMixin:
-    def add_cart(self, user, recipe):
+    def cart_add(self, user, recipe):
         if self.request.method == 'POST':
             if user.cart.filter(pk=recipe.pk).exists():
                 return Response(
@@ -28,7 +28,7 @@ class RecipeActionMixin:
             user.cart.remove(recipe)
             return Response(status=status.HTTP_204_NO_CONTENT)
 
-    def add_favorite(self, user, recipe):
+    def fav_add(self, user, recipe):
         if self.request.method == 'POST':
             if user.fav.filter(pk=recipe.pk).exists():
                 return Response(
