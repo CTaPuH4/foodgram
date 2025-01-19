@@ -34,3 +34,8 @@ class CustomUser(AbstractUser):
         verbose_name='Список покупок',
         blank=True,
     )
+
+    class Meta:
+        verbose_name = 'пользователь'
+        verbose_name_plural = 'Пользователи'
+        ordering = ('pk',)

@@ -1,19 +1,18 @@
 from rest_framework import status
 from rest_framework.response import Response
 
-from users.serializers import RelatedRecipeSerializer
+from api.serializers import RelatedRecipeSerializer
 
 
 class RecipeActionMixin:
-    def related_field_add(self, user, related_field, recipe):
-        """Обрабатывает добавление/удаление рецепта для поля (cart или fav)."""
+    def add_cart(self, user, recipe):
         if self.request.method == 'POST':
-            if getattr(user, related_field).filter(pk=recipe.pk).exists():
+            if user.cart.filter(pk=recipe.pk).exists():
                 return Response(
-                    {'detail': f'Этот рецепт уже в {related_field}.'},
+                    {'detail': 'Этот рецепт уже в списке покупок.'},
                     status=status.HTTP_400_BAD_REQUEST
                 )
-            getattr(user, related_field).add(recipe)
+            user.cart.add(recipe)
             serializer = RelatedRecipeSerializer(
                 recipe,
                 context={'request': self.request}
@@ -21,10 +20,33 @@ class RecipeActionMixin:
             return Response(serializer.data, status=status.HTTP_201_CREATED)
 
         elif self.request.method == 'DELETE':
-            if not getattr(user, related_field).filter(pk=recipe.pk).exists():
+            if not user.cart.filter(pk=recipe.pk).exists():
                 return Response(
-                    {'detail': f'Этого рецепта нет в {related_field}.'},
+                    {'detail': 'Этого рецепта нет в списке покупок.'},
                     status=status.HTTP_400_BAD_REQUEST
                 )
-            getattr(user, related_field).remove(recipe)
+            user.cart.remove(recipe)
+            return Response(status=status.HTTP_204_NO_CONTENT)
+
+    def add_favorite(self, user, recipe):
+        if self.request.method == 'POST':
+            if user.fav.filter(pk=recipe.pk).exists():
+                return Response(
+                    {'detail': 'Этот рецепт уже в избранном.'},
+                    status=status.HTTP_400_BAD_REQUEST
+                )
+            user.fav.add(recipe)
+            serializer = RelatedRecipeSerializer(
+                recipe,
+                context={'request': self.request}
+            )
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+        elif self.request.method == 'DELETE':
+            if not user.fav.filter(pk=recipe.pk).exists():
+                return Response(
+                    {'detail': 'Этого рецепта нет в избранном.'},
+                    status=status.HTTP_400_BAD_REQUEST
+                )
+            user.fav.remove(recipe)
             return Response(status=status.HTTP_204_NO_CONTENT)

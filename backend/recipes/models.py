@@ -1,7 +1,7 @@
-from django.core.validators import MinValueValidator
+from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
 
-from recipes.constants import TITLE_MAX_LENGTH
+from recipes.constants import TITLE_MAX_LENGTH, MAX_VALUE, MIN_VALUE
 from users.models import CustomUser
 
 
@@ -25,6 +25,7 @@ class Tag(AbstractModel):
     class Meta:
         verbose_name = 'тег'
         verbose_name_plural = 'Теги'
+        ordering = ('pk',)
 
 
 class Ingredient(AbstractModel):
@@ -36,6 +37,7 @@ class Ingredient(AbstractModel):
     class Meta:
         verbose_name = 'ингредиент'
         verbose_name_plural = 'Ингредиенты'
+        ordering = ('pk',)
 
 
 class Recipe(AbstractModel):
@@ -61,12 +63,16 @@ class Recipe(AbstractModel):
     )
     cooking_time = models.PositiveSmallIntegerField(
         'Время приготовления',
-        validators=(MinValueValidator(1),),
+        validators=(
+            MinValueValidator(MIN_VALUE),
+            MaxValueValidator(MAX_VALUE)
+        ),
     )
 
     class Meta:
         verbose_name = 'рецепт'
         verbose_name_plural = 'Рецепты'
+        ordering = ('-pk',)
 
 
 class RecipeIngredients(models.Model):
@@ -84,10 +90,14 @@ class RecipeIngredients(models.Model):
     )
     amount = models.PositiveIntegerField(
         'Количество',
-        validators=(MinValueValidator(1),),
+        validators=(
+            MinValueValidator(MIN_VALUE),
+            MaxValueValidator(MAX_VALUE)
+        ),
     )
 
     class Meta:
         verbose_name = 'ингредиенты рецепта'
         verbose_name_plural = 'Ингредиенты рецептов'
         unique_together = ('recipe', 'ingredient')
+        ordering = ('pk',)
