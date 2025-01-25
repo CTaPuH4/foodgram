@@ -239,30 +239,13 @@ class RecipeSerializer(serializers.ModelSerializer):
         )
 
         recipe.tags.set(tags_data)
-        recipe_ingredients = [
-            RecipeIngredients(
-                recipe=recipe,
-                ingredient=ingredient_obj['ingredient'],
-                amount=ingredient_obj['amount']
-            )
-            for ingredient_obj in ingredients_data
-        ]
-        RecipeIngredients.objects.bulk_create(recipe_ingredients)
-
+        self.ingredients_create(ingredients_data, recipe)
         return recipe
 
     def update(self, instance, validated_data):
         instance.ingredients.clear()
         ingredients_data = validated_data.pop('recipeingredients')
-        recipe_ingredients = [
-            RecipeIngredients(
-                recipe=instance,
-                ingredient=ingredient_obj['ingredient'],
-                amount=ingredient_obj['amount']
-            )
-            for ingredient_obj in ingredients_data
-        ]
-        RecipeIngredients.objects.bulk_create(recipe_ingredients)
+        self.ingredients_create(ingredients_data, instance)
 
         instance.tags.clear()
         tags_data = validated_data.pop('tags')
@@ -287,6 +270,17 @@ class RecipeSerializer(serializers.ModelSerializer):
         representation['tags'] = TagSerializer(
             instance.tags, many=True).data
         return representation
+
+    def ingredients_create(self, ingredients_data, recipe):
+        recipe_ingredients = [
+            RecipeIngredients(
+                recipe=recipe,
+                ingredient=ingredient_obj['ingredient'],
+                amount=ingredient_obj['amount']
+            )
+            for ingredient_obj in ingredients_data
+        ]
+        RecipeIngredients.objects.bulk_create(recipe_ingredients)
 
 
 class RelatedRecipeSerializer(serializers.ModelSerializer):
